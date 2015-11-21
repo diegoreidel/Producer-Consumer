@@ -1,8 +1,11 @@
 -module(producer).
--export([init/1]).
+-export([init/2]).
 
-init(Table) ->
-	
+init(Master, Table) ->
+	timer:sleep(1000),
+	Pid = self(),
+	Msg = "The sushi-man has been created!",
+	Master ! {Pid, message, Msg}.
 
 loop() ->
 	receive
