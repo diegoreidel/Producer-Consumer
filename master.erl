@@ -1,6 +1,28 @@
 -module(master).
--export([go/1]).
+-export([go/0]).
 
-go(Msg) ->
-	Pid2 = spawn(producer, loop, []),
-	Pid2 ! {self(), Msg}.
+go() ->
+	
+	Pid 	= self(),
+	Table 	=  createSushiTable(Pid),
+	loop(Table).
+
+createSushiTable(Pid) ->
+	spawn(bufferMemory, loop, [Pid]).
+
+loop(Table) ->
+	
+	receive
+		{From, message, Msg} ->
+			showMessage(From, [Msg]),
+			loop(Table);
+
+		stop ->
+			true
+	end.
+
+showMessage(From, Msg) ->
+	io:format("~p says: ~p~n", [From, Msg]).
+
+
+
