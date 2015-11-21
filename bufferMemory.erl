@@ -15,9 +15,9 @@ loop(Table, Master) ->
 
 	receive
 		{Sushi, sushiReady} ->
-			NewTable = lists:append(Table, [Sushi]),
+			NewTable = lists:append(Table, Sushi),
 			Msg = "A Sushi was added to the table",
-			%io:format("Lenght ~w", [length(NewTable)]),
+			%io:format("Length: ~w, ~w", [length(NewTable), NewTable]),
 			Master ! {Pid, message, Msg},
 
 			loop(NewTable, Master);

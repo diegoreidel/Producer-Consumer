@@ -5,11 +5,15 @@ init(Master, Table) ->
 	timer:sleep(1000),
 	Pid = self(),
 	Msg = "The sushi-man has been created!",
-	Master ! {Pid, message, Msg}.
+	Master ! {Pid, message, Msg},
 
-loop() ->
-	receive
-		{From, Msg} ->
-			io:format("~w sent me: ", [From]),
-			io:format("~w~n", [Msg])
-	end.
+	loop(Table).
+
+loop(Table) ->
+	timer:sleep(1000),
+	makeSushi(Table),
+	loop(Table).
+
+makeSushi(Table) ->
+	Sushi = "A",
+	Table ! {Sushi, sushiReady}.
