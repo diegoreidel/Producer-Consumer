@@ -1,20 +1,24 @@
 -module(master).
--export([go/0]).
+-export([init/0]).
 
-go() ->
+init() ->
 	
 	Pid 	= self(),
 	Table 	=  createSushiTable(Pid),
 	loop(Table).
 
 createSushiTable(Pid) ->
-	spawn(bufferMemory, loop, [Pid]).
+	spawn(bufferMemory, init, [Pid]).
 
 loop(Table) ->
 	
 	receive
 		{From, message, Msg} ->
 			showMessage(From, [Msg]),
+			List = [1],
+			ListB = [2],
+			Table ! {List, sushiReady},
+			Table ! {ListB, sushiReady},
 			loop(Table);
 
 		stop ->

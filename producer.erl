@@ -1,5 +1,8 @@
 -module(producer).
--export([loop/0]).
+-export([init/1]).
+
+init(Table) ->
+	
 
 loop() ->
 	receive
