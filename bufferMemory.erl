@@ -22,6 +22,19 @@ loop(Table, Master) ->
 
 			loop(NewTable, Master);
 
+		{Client, starving} ->
+			{Sushi, All} = getSushi(Table),
+
+			Client ! {Sushi, ready},
+
+			Msg = "A Sushi was removed from the table",
+			Master ! {Pid, message, Msg},
+
+			loop(All, Master);
+
 		stop ->
 			true
 	end.
+
+getSushi([Head | Tail]) ->
+	{Head, Tail}.

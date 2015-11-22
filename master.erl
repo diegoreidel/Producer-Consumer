@@ -6,6 +6,7 @@ init() ->
 	Pid 		= self(),
 	Table 		= createSushiTable(Pid),
 	SushiMen 	= createSushiMen(Pid, Table),
+	Client		= createJapanese(Pid, Table),
 	loop(Table).
 
 createSushiTable(Pid) ->
@@ -13,6 +14,9 @@ createSushiTable(Pid) ->
 
 createSushiMen(Pid, Table) ->
 	spawn(producer, init, [Pid, Table]).
+
+createJapanese(Pid, Table) ->
+	spawn(consumer, init, [Pid, Table]).
 
 loop(Table) ->
 	

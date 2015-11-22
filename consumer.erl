@@ -1,9 +1,24 @@
 -module(consumer).
--export([loop/0]).
+-export([init/2]).
 
-loop() ->
+init(Master, Table) ->
+	timer:sleep(1000),
+	Pid = self(),
+	Msg = "The japanese guy has been created!",
+	Master ! {Pid, message, Msg},
+
+	loop(Table).
+
+loop(Table) ->
+	timer:sleep(2000),
+	eatSushi(Table),
+	loop(Table).
+
+eatSushi(Table) ->
+	Pid = self(),
+	Table ! {Pid, starving},
+
 	receive
-		{From, Msg} ->
-			io:format("~w sent me: ", [From]),
-			io:format("~w~n", [Msg])
+		{Sushi, ready} ->
+			io:fwrite("Thanks for the great sushi ~n")
 	end.
