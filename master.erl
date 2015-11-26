@@ -24,7 +24,6 @@ loop(Table) ->
 		{From, message, Msg} ->
 			showMessage(From, [Msg]),
 			loop(Table);
-
 		stop ->
 			true
 	end.

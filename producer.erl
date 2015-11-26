@@ -7,7 +7,7 @@ init(Master, Table) ->
 	Msg = "The sushi-man has been created!",
 	Master ! {Pid, message, Msg},
 
-	loop(Table, 0).
+	loop(Table, 1).
 
 loop(Table, SushiId) ->
 	timer:sleep(1000),
@@ -17,4 +17,4 @@ loop(Table, SushiId) ->
 makeSushi(Table, SushiId) ->
 	Self = self(),
 	Sushi = spawn(product, init, [Self, SushiId]),
-	Table ! {[Sushi, SushiId], sushiReady}.
+	Table ! {Sushi, sushiReady}.

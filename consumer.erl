@@ -7,18 +7,32 @@ init(Master, Table) ->
 	Msg = "The japanese guy has been created!",
 	Master ! {Pid, message, Msg},
 
-	loop(Table).
+	loop(Master, Table).
 
-loop(Table) ->
+loop(Master, Table) ->
 	timer:sleep(2000),
-	eatSushi(Table),
-	loop(Table).
+	getSushi(Master, Table),
+	loop(Master, Table).
 
-eatSushi(Table) ->
+getSushi(Master, Table) ->
 	Pid = self(),
 	Table ! {Pid, starving},
 
 	receive
 		{Sushi, ready} ->
-			io:fwrite("Thanks for the great sushi ~n")
+			eatSushi(Master, Table, Sushi),
+			loop(Master, Table);
+		dead ->
+			true
 	end.
+
+eatSushi(Master, Table, Sushi) ->
+	Pid = self(),
+	Sushi ! {Pid, getID},
+	receive
+		{SushiId, sushi} ->
+			Msg = lists:flatten(io_lib:format("I ate sushi ~p and it was great! Thank you.", [SushiId])),
+			Master ! {Pid, message, Msg}
+	end.
+
+
