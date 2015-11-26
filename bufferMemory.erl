@@ -1,26 +1,34 @@
 -module(bufferMemory).
--export([init/1]).
+-export([init/2]).
 
-init(Master) -> 
+init(Master, Max) -> 
 	
 	timer:sleep(1000),
 	Pid = self(),
 	Msg = "I have been created!",
 	Master ! {Pid, message, Msg},
 	Table = [],
-	loop(Table, Master).
+	loop(Table, Master, Max).
 
-loop(Table, Master) ->
+loop(Table, Master, Max) ->
 	Pid = self(),
 
 	receive
 		{Sushi, sushiReady} ->
-			NewTable = lists:append(Table, [Sushi]),
-			Msg = "A Sushi was added to the table",
-			%io:format("Length: ~w, ~w", [length(NewTable), NewTable]),
-			Master ! {Pid, message, Msg},
+			QtdSushi = length(Table),
+			if
+				Max > QtdSushi ->
+					NewTable = lists:append(Table, [Sushi]),
+					Msg = "A Sushi was added to the table",
+					io:format("Length: ~w~n", [length(NewTable)]),
+					Master ! {Pid, message, Msg},
+					loop(NewTable, Master, Max);
 
-			loop(NewTable, Master);
+				QtdSushi >= Max ->
+					io:format("List is full: ~w~n", [length(Table)]),
+					loop(Table, Master, Max)
+
+			end;
 
 		{Client, starving} ->
 			{Sushi, All} = getSushi(Table),
@@ -28,7 +36,7 @@ loop(Table, Master) ->
 			Msg = "A Sushi was removed from the table",
 			Master ! {Pid, message, Msg},
 
-			loop(All, Master);
+			loop(All, Master, Max);
 
 		stop ->
 			true

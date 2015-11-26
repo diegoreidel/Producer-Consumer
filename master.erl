@@ -4,13 +4,14 @@
 init() ->
 	
 	Pid 		= self(),
-	Table 		= createSushiTable(Pid),
+	MaxSushi    = 4,
+	Table 		= createSushiTable(Pid, MaxSushi),
 	SushiMen 	= createSushiMen(Pid, Table),
 	Client		= createJapanese(Pid, Table),
 	loop(Table).
 
-createSushiTable(Pid) ->
-	spawn(bufferMemory, init, [Pid]).
+createSushiTable(Pid, MaxSushi) ->
+	spawn(bufferMemory, init, [Pid, MaxSushi]).
 
 createSushiMen(Pid, Table) ->
 	spawn(producer, init, [Pid, Table]).
