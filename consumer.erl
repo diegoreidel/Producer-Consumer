@@ -10,7 +10,7 @@ init(Master, Table) ->
 	loop(Master, Table).
 
 loop(Master, Table) ->
-	timer:sleep(2000),
+	timer:sleep(500),
 	getSushi(Master, Table),
 	loop(Master, Table).
 
@@ -21,6 +21,8 @@ getSushi(Master, Table) ->
 	receive
 		{Sushi, ready} ->
 			eatSushi(Master, Table, Sushi),
+			loop(Master, Table);
+		noSushi ->
 			loop(Master, Table);
 		dead ->
 			true

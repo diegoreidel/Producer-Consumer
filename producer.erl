@@ -7,12 +7,12 @@ init(Master, Table) ->
 	Msg = "The sushi-man has been created!",
 	Master ! {Pid, message, Msg},
 
-	loop(Table, 1).
+	loop(Table, 1, 1000).
 
-loop(Table, SushiId) ->
-	timer:sleep(1000),
+loop(Table, SushiId, Hush) ->
+	timer:sleep(Hush),
 	makeSushi(Table, SushiId),
-	loop(Table, SushiId+1).
+	loop(Table, SushiId+1, Hushi).
 
 makeSushi(Table, SushiId) ->
 	Self = self(),

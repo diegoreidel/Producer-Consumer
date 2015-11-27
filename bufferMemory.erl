@@ -31,12 +31,21 @@ loop(Table, Master, Max) ->
 			end;
 
 		{Client, starving} ->
-			{Sushi, All} = getSushi(Table),
-			Client ! {Sushi, ready},
-			Msg = "A Sushi was removed from the table",
-			Master ! {Pid, message, Msg},
+			QtdSushi = length(Table),
+			if
+				QtdSushi > 0 ->
+					{Sushi, All} = getSushi(Table),
+					Client ! {Sushi, ready},
+					Msg = "A Sushi was removed from the table",
+					Master ! {Pid, message, Msg},
+					loop(All, Master, Max);
 
-			loop(All, Master, Max);
+				0 >= QtdSushi ->
+					io:format("List is empty: ~w~n", [length(Table)]),
+					Client ! noSushi,
+					loop(Table, Master, Max)
+			end;
+			
 
 		stop ->
 			true
