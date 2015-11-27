@@ -10,7 +10,6 @@ loop(Producer, Id) ->
 			loop(Producer, Id);
 		eaten ->
 			true
-
 	end.
 
 

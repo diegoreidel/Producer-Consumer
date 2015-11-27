@@ -2,7 +2,6 @@
 -export([init/2]).
 
 init(Master, Table) ->
-	timer:sleep(1000),
 	Pid = self(),
 	Msg = "The japanese guy has been created!",
 	Master ! {Pid, message, Msg},
@@ -10,7 +9,7 @@ init(Master, Table) ->
 	loop(Master, Table).
 
 loop(Master, Table) ->
-	timer:sleep(500),
+	timer:sleep(2000),
 	getSushi(Master, Table),
 	loop(Master, Table).
 
@@ -34,6 +33,7 @@ eatSushi(Master, Table, Sushi) ->
 	receive
 		{SushiId, sushi} ->
 			Msg = lists:flatten(io_lib:format("I ate sushi ~p and it was great! Thank you.", [SushiId])),
+			Sushi ! eaten,
 			Master ! {Pid, message, Msg}
 	end.
 
