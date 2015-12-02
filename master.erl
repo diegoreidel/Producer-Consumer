@@ -6,8 +6,8 @@ init() ->
 	Pid 		= self(),
 	MaxSushi    = 4,
 	Table 		= createSushiTable(Pid, MaxSushi),
-	SushiMen 	= createSushiMen(Pid, Table),
-	Client		= createJapanese(Pid, Table),
+	createSushiMen(Pid, Table),
+	createJapanese(Pid, Table),
 	loop(Table).
 
 createSushiTable(Pid, MaxSushi) ->
