@@ -10,7 +10,6 @@ init(Master, Max) ->
 	loop(Master, Table, Max).
 
 loop(Master, Table, Max) ->
-	Pid = self(),
 
 	receive
 		{Producer, Sushi, sushiReady} ->
@@ -29,12 +28,7 @@ loop(Master, Table, Max) ->
 			QtdSushi = length(Table),
 			if
 				QtdSushi > 0 ->
-					{Sushi, All} = getSushi(Table),
-					Client ! {Sushi, ready},
-					NewQtdSushi = QtdSushi-1,
-					Msg = lists:flatten(io_lib:format("A Sushi was removed from the table. There are ~w now.", [NewQtdSushi])),
-					Master ! {Pid, message, Msg},
-					loop(Master, All, Max);
+					removeSushi(Master, Table, Max, Client);
 
 				0 >= QtdSushi ->
 					%io:format("List is empty: ~w~n", [length(Table)]),
@@ -47,9 +41,6 @@ loop(Master, Table, Max) ->
 			true
 	end.
 
-getSushi([Head | Tail]) ->
-	{Head, Tail}.
-
 addSushi(Master, Table, Max, Sushi, Producer) ->
 	Pid = self(),
 	QtdSushi = length(Table),
@@ -58,6 +49,20 @@ addSushi(Master, Table, Max, Sushi, Producer) ->
 	Msg = lists:flatten(io_lib:format("A Sushi was added to the table! There are ~w now.",[NewQtdSushi])),
 	Master ! {Pid, message, Msg},
 	checkTable(Master, NewTable, Max, QtdSushi+1, Producer).
+
+removeSushi(Master, Table, Max, Client) ->
+	QtdSushi = length(Table),
+	Pid = self(),
+
+	{Sushi, All} = getSushi(Table),
+	Client ! {Sushi, ready},
+	NewQtdSushi = QtdSushi-1,
+	Msg = lists:flatten(io_lib:format("A Sushi was removed from the table. There are ~w now.", [NewQtdSushi])),
+	Master ! {Pid, message, Msg},
+	loop(Master, All, Max).
+
+getSushi([Head | Tail]) ->
+	{Head, Tail}.
 
 checkTable(Master, Table, Max, QtdSushi, Producer) ->
 	if

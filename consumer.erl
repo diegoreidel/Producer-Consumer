@@ -6,12 +6,11 @@ init(Master, Table) ->
 	Msg = "The japanese guy has been created!",
 	Master ! {Pid, message, Msg},
 
-	loop(Master, Table).
+	loop(Master, Table, 2000).
 
-loop(Master, Table) ->
-	timer:sleep(2000),
-	getSushi(Master, Table),
-	loop(Master, Table).
+loop(Master, Table, Hush) ->
+	timer:sleep(Hush),
+	getSushi(Master, Table).
 
 getSushi(Master, Table) ->
 	Pid = self(),
@@ -19,15 +18,17 @@ getSushi(Master, Table) ->
 
 	receive
 		{Sushi, ready} ->
-			eatSushi(Master, Table, Sushi),
-			loop(Master, Table);
+			eatSushi(Master, Sushi),
+			loop(Master, Table, 2000);
 		noSushi ->
-			loop(Master, Table);
+			Msg = "I am starting to hate this place. There is no sushi!!",
+			Master ! {Pid, message, Msg},
+			loop(Master, Table, 5000);
 		dead ->
 			true
 	end.
 
-eatSushi(Master, Table, Sushi) ->
+eatSushi(Master, Sushi) ->
 	Pid = self(),
 	Sushi ! {Pid, getID},
 	receive
@@ -36,5 +37,3 @@ eatSushi(Master, Table, Sushi) ->
 			Sushi ! eaten,
 			Master ! {Pid, message, Msg}
 	end.
-
-
